@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="kr.co.spring.user"> 
+	
+	<select id="selectUserLogin" parameterType="HashMap" resultType="HashMap">
+	
+		SELECT USER_ID
+			  ,USER_PWD
+	      FROM TB_USER
+	    WHERE 1=1
+	      AND USER_ID = #{USER_ID}
+	      AND USER_PWD = #{USER_PWD}
+	
+	</select>	
+	
+	<insert id="selectUserSign" parameterType="kr.co.spring.vo.UserVo">
+	
+		INSERT INTO TB_USER
+		(
+			USER_ID
+		   ,USER_PWD
+		   ,KNAME
+		   ,ADDR1
+		   ,ADDR2
+		   ,GENDER
+		   ,PHONE
+		   ,REG_DATE
+		)
+		VALUES
+		(
+			#{USER_ID}
+		   ,#{USER_PWD}
+		   ,#{KNAME}
+		   ,#{ADDR1}
+		   ,#{ADDR2}
+		   ,#{GENDER}
+		   ,#{PHONE}
+		   ,TO_CHAR(SYSDATE, 'YYYYMMDD')
+		)
+	
+	</insert>
+	
+	<select id="selectLoginCheck" parameterType="HashMap" resultType="HashMap">
+	
+		SELECT USER_ID
+			  ,USER_PWD
+	      FROM TB_USER
+	    WHERE 1=1
+	      AND USER_ID = #{USER_ID}
+	      AND USER_PWD = #{USER_PWD}
+	
+	</select>	
+	
+	<select id="selectSignCheck" parameterType="HashMap" resultType="HashMap">
+	
+		SELECT USER_ID
+			  ,USER_PWD
+	      FROM TB_USER
+	    WHERE 1=1
+	      AND USER_ID = #{USER_ID}
+	
+	</select>		
+		
+</mapper>
+

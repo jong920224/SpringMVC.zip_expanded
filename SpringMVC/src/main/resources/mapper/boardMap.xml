@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+
+<mapper namespace="kr.co.spring.board"> 
+	
+	<!-- 
+		파일정보를 조회한다. 
+	-->
+	<select id="selectFileInfo" parameterType="String" resultType="Map">
+	
+		SELECT *
+		  FROM TB_FILE
+		 WHERE FILE_NUM = #{FILE_NUM}
+	
+	</select>
+	
+	<!-- 파일번호 채번 -->
+	<select id="selectFileNum" resultType="String">
+	
+		SELECT LPAD(NVL(MAX(FILE_NUM), '0')+1, 4, '0')
+		  FROM TB_BOARD
+	
+	</select>
+		
+	<!--  
+		전체 게시글을 조회한다.
+	-->
+	<select id="selectBoardList" parameterType="map" resultType="map">
+		
+		SELECT BOARD_NUM
+              ,BOARD_WRITER
+              ,BOARD_TITLE
+              ,BOARD_CONTEXT
+              ,READ_COUNT
+              ,SUBSTR(REG_DATE,1,4) || '년 ' || SUBSTR(REG_DATE,5,2) || '월 ' || SUBSTR(REG_DATE, 7,2) || '일'  AS REG_DATE
+              ,B.FILE_ORIGINAL_NAME AS FILE_NAME
+		  FROM TB_BOARD A
+		  JOIN TB_FILE B
+		    ON A.FILE_NUM = B.FILE_NUM
+		 WHERE 1=1
+		 ORDER BY BOARD_NUM
+		
+	</select>
+	
+	<!--
+		게시글을 등록한다.
+	  -->
+	<insert id="selectWriteAction" parameterType="kr.co.spring.vo.BoardVo" >
+		
+		INSERT INTO TB_BOARD
+		(
+			 BOARD_NUM
+			,BOARD_WRITER
+			,BOARD_TITLE
+			,BOARD_CONTEXT
+			,FILE_NUM
+			,REG_DATE
+		)
+		VALUES
+		(
+		   	 BOARD_SEQ.NEXTVAL
+		   	,#{board_writer}
+		   	,#{board_title}
+		   	,#{board_context}
+			,#{file_num}		   
+		   	,TO_CHAR(SYSDATE, 'YYYYMMDD')	
+		)
+		
+	</insert>	
+	
+	<insert id="selectWriteFile" parameterType="Map">
+	
+		INSERT INTO TB_FILE
+		(
+			FILE_NUM
+		   ,FILE_ORIGINAL_NAME
+		   ,FILE_SIZE
+		   ,FILE_PATH
+		   ,USER_ID
+		)
+		VALUES
+		(
+			#{FILE_NUM}
+		   ,#{FILE_ORIGINAL_NAME}
+		   ,#{FILE_SIZE}
+		   ,#{FILE_PATH}
+		   ,#{USER_ID}
+		)		
+	
+	</insert>
+	
+	<!--  
+		게시글 전체 개수 조회
+	-->	
+	<select id="selectBoardCount" parameterType="map" resultType="int">
+		
+		SELECT /*selectBoardCount*/
+			   COUNT(*) AS COUNT
+		  FROM TB_BOARD
+		 WHERE 1=1
+		
+	</select>	
+	
+	<!--  
+		게시글 상세 조회
+	-->
+	<select id="selectBoardDetail" parameterType="map" resultType="map">
+		
+		SELECT BOARD_NUM
+              ,BOARD_WRITER
+              ,BOARD_TITLE
+              ,BOARD_CONTEXT
+              ,READ_COUNT
+              ,SUBSTR(REG_DATE,1,4) || '년 ' || SUBSTR(REG_DATE,5,2) || '월 ' || SUBSTR(REG_DATE, 7,2) || '일'  AS REG_DATE
+              ,A.FILE_NUM
+              ,B.FILE_ORIGINAL_NAME AS FILE_NAME
+		  FROM TB_BOARD A
+		  JOIN TB_FILE B
+		    ON A.FILE_NUM = B.FILE_NUM
+		 WHERE 1=1
+		 ORDER BY BOARD_NUM
+		 
+	</select>
+	
+	<!--  
+		게시글 삭제
+	-->
+	<delete id="selectDeleteAction" parameterType="map">
+	
+		DELETE FROM TB_BOARD
+		WHERE BOARD_NUM = #{BOARD_NUM}
+	
+	</delete>
+	
+	<!--  
+		게시글 업데이트
+	-->
+	<update id="selectUpdateAction" parameterType="map">
+	
+		UPDATE TB_BOARD
+		   SET BOARD_TITLE = #{BOARD_TITLE}
+		      ,BOARD_CONTEXT = #{BOARD_CONTEXT}
+		 WHERE BOARD_NUM = #{BOARD_NUM}
+	
+	</update>
+	
+</mapper>
+
